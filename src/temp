@@ -1,0 +1,51 @@
+app.get('/vehicles/counts', (req, res) => {
+   VehicleModel.aggregate([
+       {
+           $group: {
+               _id: '$vehicleName',
+               count: { $sum: 1 } // Count occurrences of each vehicleName
+           }
+       }
+   ])
+   .then(vehicleCounts => {
+       const countsMap = {};
+       vehicleCounts.forEach(item => {
+           countsMap[item._id] = item.count;
+       });
+       res.json(countsMap);
+   })
+   .catch(err => res.status(500).json({ error: err.message }));
+ });
+
+
+
+
+
+
+ const [totalusers, setTotalusers] = useState(0);
+
+ useEffect(() => {
+   axios
+     .get("http://localhost:3000/getTotalCreateusersCount")
+     .then((res) => {
+       setTotalusers(res.data.totalusers);
+     })
+     .catch((err) => {
+       console.error("Error fetching total slot count:", err);
+     });
+ }, []);
+
+
+
+
+
+ <div>
+ <h2>Vehicle Counts:</h2>
+ <ul>
+     {Object.keys(vehicleCounts).map(vehicleName => (
+         <li key={vehicleName}>
+             {vehicleName}: {vehicleCounts[vehicleName]}
+         </li>
+     ))}
+ </ul>
+</div>
